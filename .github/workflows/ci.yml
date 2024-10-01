@@ -1,0 +1,70 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Executar nas mudanças da branch main
+  pull_request:
+    branches:
+      - main  # Executar em PRs para a branch main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies with Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry install
+
+      - name: Run flake8 (Linting)
+        run: |
+          poetry run flake8 .
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies with Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry install
+
+      - name: Run tests
+        run: |
+          poetry run pytest
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test  # Só roda se os testes passarem
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t zuplae/zuplae-platform-backend:latest .
+          docker tag zuplae/zuplae-platform-backend:latest zuplae/zuplae-platform-backend:${{ github.sha }}
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push zuplae/zuplae-platform-backend:latest
+          docker push zuplae/zuplae-platform-backend:${{ github.sha }}
