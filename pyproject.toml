@@ -1,0 +1,58 @@
+[tool.poetry]
+name = "zpe-platform-backend"
+version = "0.1.0"
+description = "Backend da plataforma de cursos da ZUPLAE"
+authors = ["Maykon D. Granemann <maykondgranemann@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.scripts]
+lint = "flake8"
+format = "black ."
+sort-imports = "isort ."
+type-check = "mypy"
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.31.0"}
+sqlalchemy = "^2.0.35"
+psycopg2-binary = "^2.9.9"
+alembic = "^1.13.3"
+pydantic = "^2.9.2"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.1"
+black = "^24.10.0"
+isort = "^5.13.2"
+mypy = "^1.11.2"
+pre-commit = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | __pycache__
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = ["venv", "__pycache__"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+strict = true
