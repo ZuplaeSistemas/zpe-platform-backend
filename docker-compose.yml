@@ -2,25 +2,27 @@ version: '3.8'
 
 services:
   zpe_backend:
-    image: zuplae/zuplae-platform-backend
+    build: .
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     environment:
       - POSTGRES_DB=zpe_platform_db
-      - POSTGRES_USER=zpe
-      - POSTGRES_PASSWORD=platforma@1508
-      - DATABASE_URL=postgresql://zpe:platforma@1508@db:5432/zpe_platform_db
+      - POSTGRES_USER=zuplae  # Ajuste para garantir que o usuário seja consistente
+      - POSTGRES_PASSWORD=platform2024
+      - DATABASE_URL=postgresql://zuplae:platform2024@db:5432/zpe_platform_db  # Ajuste do usuário e senha na URL de conexão
 
   db:
     image: postgres:14
     environment:
       POSTGRES_DB: zpe_platform_db
-      POSTGRES_USER: zpe
-      POSTGRES_PASSWORD: platforma@1508
+      POSTGRES_USER: zuplae  # Consistência no usuário
+      POSTGRES_PASSWORD: platform2024  # Consistência na senha
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
   postgres_data:
