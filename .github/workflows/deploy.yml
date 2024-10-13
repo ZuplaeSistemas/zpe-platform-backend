@@ -46,6 +46,7 @@ jobs:
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             POSTGRES_HOST=${{ secrets.RDS_HOST }}
+            FIXED_TOKEN=${{ secrets.FIXED_TOKEN }}  # Adicionar o FIXED_TOKEN aqui
           script: |
             docker pull zuplae/zpe-platform-backend:latest
             docker stop zpe-platform-backend || true
@@ -66,4 +67,5 @@ jobs:
               -e POSTGRES_USER=$POSTGRES_USER \
               -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
               -e POSTGRES_HOST=$POSTGRES_HOST \
+              -e FIXED_TOKEN=$FIXED_TOKEN \  # Adicionar o FIXED_TOKEN na execução do contêiner
               -p 80:80 zuplae/zpe-platform-backend:latest
