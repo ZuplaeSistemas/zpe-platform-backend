@@ -1,0 +1,69 @@
+name: Deploy FastAPI Application to EC2
+
+on:
+  push:
+    branches:
+      - main  # Aciona o workflow quando há push na branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout do código
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      # Configurar o ambiente Python
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.12'
+
+      # Instalar as dependências
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      # Build da aplicação Docker
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t zuplae/zpe-platform-backend:latest .
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push zuplae/zpe-platform-backend:latest
+
+      # Conectar ao EC2 via SSH para rodar os containers
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: |
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_HOST=${{ secrets.RDS_HOST }}
+          script: |
+            docker pull zuplae/zpe-platform-backend:latest
+            docker stop zpe-platform-backend || true
+            docker rm zpe-platform-backend || true
+
+            # Executa as migrations
+            docker run --rm \
+              -e POSTGRES_DB=$POSTGRES_DB \
+              -e POSTGRES_USER=$POSTGRES_USER \
+              -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+              -e POSTGRES_HOST=$POSTGRES_HOST \
+              zuplae/zpe-platform-backend:latest \
+              alembic upgrade head  # Rodando as migrations
+
+            # Executa a aplicação
+            docker run -d --name zpe-platform-backend \
+              -e POSTGRES_DB=$POSTGRES_DB \
+              -e POSTGRES_USER=$POSTGRES_USER \
+              -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+              -e POSTGRES_HOST=$POSTGRES_HOST \
+              -p 80:80 zuplae/zpe-platform-backend:latest
