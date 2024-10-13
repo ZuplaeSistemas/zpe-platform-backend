@@ -1,5 +1,6 @@
 import bcrypt
 
+from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.user_schema import UserCreate, UserOut
 
@@ -17,9 +18,9 @@ class UserService:
             plain_password.encode("utf-8"), hashed_password.encode("utf-8")
         )
 
-    async def create_user(
-        self, user_in: UserCreate, user_repo: UserRepository
-    ) -> UserOut:
+    async def create_user(self, user_in: UserCreate) -> UserOut:
+        user_repo = UserRepository()
+
         # Verifica se o e-mail ou nome de usuário já existem
         if await user_repo.get_user_by_email(user_in.email):
             raise ValueError("Email already registered")
@@ -28,9 +29,19 @@ class UserService:
 
         # Hash da senha e criação do usuário
         hashed_password = self.hash_password(user_in.password)
-        user = await user_repo.create_user(
-            user_in=user_in, hashed_password=hashed_password
+        user = User(
+            full_name=user_in.full_name,
+            username=user_in.username,
+            email=user_in.email,
+            hashed_password=hashed_password,
         )
+        user = await user_repo.add(user)
 
-        # Retornar o usuário criado
-        return UserOut(**user.__dict__)
+        # Acessando os dados explicitamente para evitar erros de `MissingGreenlet`
+        user_out = UserOut(
+            id=user.id,
+            full_name=user.full_name,
+            username=user.username,
+            email=user.email,
+        )
+        return user_out

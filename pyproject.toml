@@ -24,6 +24,7 @@ pydantic = {extras = ["email"], version = "^2.9.2"}
 asyncpg = "^0.29.0"
 types-passlib = "^1.7.7.20240819"
 bcrypt = "3.1.7"
+python-dotenv = "^1.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
