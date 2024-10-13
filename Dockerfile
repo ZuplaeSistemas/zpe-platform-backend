@@ -1,26 +1,18 @@
-# Usando uma imagem base oficial do Python
+# Usar uma imagem base oficial do Python
 FROM python:3.12-slim
 
-# Definindo o diretório de trabalho
+# Definir o diretório de trabalho no container
 WORKDIR /app
 
-# Copiando os arquivos de dependências
-COPY pyproject.toml poetry.lock /app/
+# Copiar o arquivo de requisitos e instalar as dependências
+COPY pyproject.toml poetry.lock* /app/
+RUN pip install poetry && poetry install --no-dev
 
-# Instalando o Poetry
-RUN pip install poetry
+# Copiar o restante do código
+COPY . .
 
-# Instalando as dependências de produção
-RUN poetry install --no-root --without dev
+# Expor a porta 80
+EXPOSE 80
 
-# Copiar o arquivo .env
-COPY .env /app/
-
-# Copiando o restante do código para o diretório de trabalho
-COPY . /app/
-
-# Expondo a porta
-EXPOSE 8000
-
-# Comando de execução
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Comando para rodar a aplicação
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
