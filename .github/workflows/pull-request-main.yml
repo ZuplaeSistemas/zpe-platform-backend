@@ -1,0 +1,56 @@
+name: Pull Request Workflow
+
+# Executar quando houver um pull request para a branch main
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout do código
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Configurar o ambiente Python
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.12'
+
+      # Instalar as dependências do projeto
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      # Instalar pre-commit e executar os hooks
+      - name: Run pre-commit hooks
+        run: |
+          pip install pre-commit
+          pre-commit install --install-hooks
+          pre-commit run --all-files
+
+      # Executar o pytest para rodar os testes
+      - name: Run tests with pytest
+        run: |
+          poetry run pytest
+
+      # Verificação de formatação de código com Black
+      - name: Run Black
+        run: |
+          poetry run black --check .
+
+      # Verificação de linting com flake8
+      - name: Run flake8
+        run: |
+          poetry run flake8 .
+
+      # Verificação de ordenação de imports com isort
+      - name: Run isort
+        run: |
+          poetry run isort --check-only .
