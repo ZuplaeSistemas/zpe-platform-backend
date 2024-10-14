@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 
 from app.dependencies import verify_fixed_token
@@ -13,3 +15,11 @@ router = APIRouter()
 async def register_user(user_in: UserCreate):
     handler = UserHandler()
     return await handler.register_user(user_in=user_in)
+
+
+@router.get(
+    "/users", response_model=List[UserOut], dependencies=[Depends(verify_fixed_token)]
+)
+async def get_users():
+    handler = UserHandler()
+    return await handler.list_users()

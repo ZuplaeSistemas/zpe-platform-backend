@@ -21,3 +21,7 @@ class UserHandler:
             raise HTTPException(status_code=400, detail=str(e))
 
         return user
+
+    async def list_users(self) -> list[UserOut]:
+        users = await self.user_service.list_users()
+        return users
