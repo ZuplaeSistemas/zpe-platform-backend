@@ -34,6 +34,14 @@ jobs:
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
           docker push zuplae/zpe-platform-backend:latest
 
+      - name: Verifying POSTGRES_PASSWORD
+        run: |
+          echo "POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}"
+          if [ -z "${{ secrets.POSTGRES_PASSWORD }}" ]; then
+            echo "POSTGRES_PASSWORD is empty!"
+            exit 1
+          fi
+
       # Conectar ao EC2 via SSH para rodar os containers
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
