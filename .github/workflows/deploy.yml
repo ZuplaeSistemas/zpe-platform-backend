@@ -62,4 +62,4 @@ jobs:
               -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
               -e POSTGRES_HOST="${{ secrets.RDS_HOST }}" \
               -e FIXED_TOKEN="${{ secrets.FIXED_TOKEN }}" \
-              -p 80:80 zuplae/zpe-platform-backend:latest
+              -p 8000:80 zuplae/zpe-platform-backend:latest
