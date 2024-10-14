@@ -48,6 +48,12 @@ jobs:
             POSTGRES_HOST=${{ secrets.RDS_HOST }}
             FIXED_TOKEN=${{ secrets.FIXED_TOKEN }}
           script: |
+            echo "POSTGRES_DB: $POSTGRES_DB"
+            echo "POSTGRES_USER: $POSTGRES_USER"
+            echo "POSTGRES_PASSWORD: $POSTGRES_PASSWORD"
+            echo "POSTGRES_HOST: $POSTGRES_HOST"
+            echo "FIXED_TOKEN: $FIXED_TOKEN"
+
             docker pull zuplae/zpe-platform-backend:latest
             docker stop zpe-platform-backend || true
             docker rm zpe-platform-backend || true
