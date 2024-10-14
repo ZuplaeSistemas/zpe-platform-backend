@@ -59,7 +59,7 @@ jobs:
               -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
               -e POSTGRES_HOST=$POSTGRES_HOST \
               zuplae/zpe-platform-backend:latest \
-              poetry run alembic upgrade head  # Usando poetry para rodar o alembic
+              poetry run alembic upgrade head
 
             # Executa a aplicação
             docker run -d --name zpe-platform-backend \
