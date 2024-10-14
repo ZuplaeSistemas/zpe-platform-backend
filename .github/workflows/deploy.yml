@@ -54,18 +54,18 @@ jobs:
 
             # Executa as migrations
             docker run --rm \
-              -e POSTGRES_DB=$POSTGRES_DB \
-              -e POSTGRES_USER=$POSTGRES_USER \
-              -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-              -e POSTGRES_HOST=$POSTGRES_HOST \
+              -e POSTGRES_DB=${POSTGRES_DB} \
+              -e POSTGRES_USER=${POSTGRES_USER} \
+              -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+              -e POSTGRES_HOST=${POSTGRES_HOST} \
               zuplae/zpe-platform-backend:latest \
               poetry run alembic upgrade head
 
             # Executa a aplicação
             docker run -d --name zpe-platform-backend \
-              -e POSTGRES_DB=$POSTGRES_DB \
-              -e POSTGRES_USER=$POSTGRES_USER \
-              -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-              -e POSTGRES_HOST=$POSTGRES_HOST \
-              -e FIXED_TOKEN=$FIXED_TOKEN \
+              -e POSTGRES_DB=${POSTGRES_DB} \
+              -e POSTGRES_USER=${POSTGRES_USER} \
+              -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+              -e POSTGRES_HOST=${POSTGRES_HOST} \
+              -e FIXED_TOKEN=${FIXED_TOKEN} \
               -p 80:80 zuplae/zpe-platform-backend:latest
