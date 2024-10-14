@@ -48,7 +48,6 @@ jobs:
 
             # Executa as migrations
             docker run --rm \
-              -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
               -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
               -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
               -e POSTGRES_HOST="${{ secrets.RDS_HOST }}" \
@@ -57,7 +56,6 @@ jobs:
 
             # Executa a aplicação
             docker run -d --name zpe-platform-backend \
-              -e POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
               -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
               -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
               -e POSTGRES_HOST="${{ secrets.RDS_HOST }}" \
